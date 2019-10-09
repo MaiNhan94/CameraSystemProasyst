@@ -1,0 +1,11 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+arg1 = $(1)
+export PATH=C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin\;C:\Renesas\e2_studio\Utilities;C:/Renesas/e2_studio/eclipse//features/com.renesas.jre.win32.win32.x86_1.8.0.181/jre/bin/client;C:/Renesas/e2_studio/eclipse//features/com.renesas.jre.win32.win32.x86_1.8.0.181/jre/bin;C:/Renesas/e2_studio/eclipse//features/com.renesas.jre.win32.win32.x86_1.8.0.181/jre/lib/i386;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Miniconda3;C:\ProgramData\Miniconda3\Library\mingw-w64\bin;C:\ProgramData\Miniconda3\Library\usr\bin;C:\ProgramData\Miniconda3\Library\bin;C:\ProgramData\Miniconda3\Scripts;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\TortoiseGit\bin;C:\Program Files\Amazon\AWSCLI\bin\;C:\Program Files (x86)\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\nodejs\;C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q2-update\bin;C:\Program Files (x86)\GNU Tools ARM Embedded\4.9 2015q3\bin;C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update\bin;C:\Users\maitr\AppData\Local\Programs\Python\Python37-32;C:\Users\maitr\AppData\Local\Programs\Python\Python37-32\Scripts;C:\Users\maitr\AppData\Local\Microsoft\WindowsApps;C:\Users\maitr\AppData\Local\Programs\Microsoft VS Code\bin;F:\ESP32-FreeRTOS\cMake\cmake-3.15.0-rc1-win64-x64\bin;F:\ESP32-FreeRTOS\freeRTOS-aws\AmazonFreeRTOS\tools\cmake\toolchains\;F:\ESP32-FreeRTOS\freeRTOS-aws\AmazonFreeRTOS\tools\cmake;C:\MinGW\bin;C:\Users\maitr\AppData\Roaming\npm;C:\Program Files (x86)\SEGGER\JLink_V644i;C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q2-update\bin\;C:\gnu-arm\bin;;C:\Renesas\e2_studio\eclipse
+export TCINSTALL=C:\Program Files (x86)\GNU Tools ARM Embedded\8 2019-q3-update$(call arg1,\)
+export CWD=$(CURDIR)
+export TC_VERSION=8.3.1.20190703
+export PWD=$(CURDIR)
+export GCC_VERSION=8.3.1
