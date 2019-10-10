@@ -36,11 +36,16 @@ DigitalOut led1(LED1);
 #define HTTP_GYRO_RESPONSE	HTTP_STATUS_LINE "\r\n"   \
         					HTTP_HEADER_FIELDS "\r\n" \
 							"\r\n"
+#define HTTP_CTRL_RESPONSE	HTTP_STATUS_LINE "\r\n"   \
+							HTTP_HEADER_FIELDS "\r\n" \
+							"\r\n"					  \
+							"OK\r\n"
 
 #define SLEEP_TIME                  500 // (msec)
 #define PRINT_AFTER_N_LOOPS         20
-#define PORT						80
-#define PORT_Gyro					81
+#define PORT						1111
+#define PORT_Gyro					2222
+#define PORT_Recv					3333
 
 
 #define    MPU9250_ADDRESS            0x69
@@ -56,12 +61,17 @@ DigitalOut led1(LED1);
 
 
 EthernetInterface eth1;
+
 TCPServer svr1;
 TCPServer svr_gyro;
+TCPServer svr_recv;
+
 TCPSocket clt_sock;
 SocketAddress clt_addr;
 
 I2C i2c(I2C_SDA, I2C_SCL);
+
+char *buff;
 
 void I2CwriteByte(uint8_t Register, uint8_t Data)
 {
@@ -113,20 +123,20 @@ void task1()
 		 svr1.accept(&clt_sock, &clt_addr);
 		 printf("[Task 1]: accept %s:%d\n", clt_addr.get_ip_address(), clt_addr.get_port());
 		 clt_sock.send(HTTP_RESPONSE, strlen(HTTP_RESPONSE));
+		 clt_sock.close();
 	}
 }
 
 void task2()
 {
-	char *resp_content;
-	resp_content =(char*)malloc(256);
 	struct gyro_data_t gyro_data;
 	while(true)
 	{
+		memset(buff, 0, 256);
 		svr_gyro.accept(&clt_sock,  &clt_addr);
 		gyro_data = Get_Gyro();
 		printf("[Task 2]: accept %s:%d\n", clt_addr.get_ip_address(), clt_addr.get_port());
-		sprintf(resp_content, "%sGyro data\r\n"
+		sprintf(buff, "%sGyro data\r\n"
 				"ax: %d\r\n"
 				"ay: %d\r\n"
 				"az: %d\r\n"
@@ -135,22 +145,32 @@ void task2()
 				"gz: %d\r\n", \
 				HTTP_GYRO_RESPONSE, gyro_data.ax, gyro_data.ay, gyro_data.az, \
 				gyro_data.gx, gyro_data.gy, gyro_data.gx);
-		printf("[Task 2]: %s", resp_content);
-		clt_sock.send(resp_content, strlen(resp_content));
+		printf("[Task 2]: %s", buff);
+		clt_sock.send(buff, strlen(buff));
+		clt_sock.close();
 	}
 }
 
 void task3()
 {
-	char *test_str;
-	test_str = (char*)malloc(128);
 	while(true)
 	{
-		sprintf(test_str, "xin chao the gioi\r\n");
- 		printf("[task 3]: %s", test_str);
-		ThisThread::sleep_for(1500);
+		memset(buff, 0, 256);
+		svr_recv.accept(&clt_sock, &clt_addr);
+		printf("[Task 3]: accept %s:%d\r\n", clt_addr.get_ip_address(), clt_addr.get_port());
+		clt_sock.recv(buff, 256);
+		printf("[Task 3]: DATA RECIEVE:\r\n%s\r\n", buff);
+		if(strstr(buff, "LED_ON") != NULL)
+		{
+			led1 = 1;
+		}
+		else if(strstr(buff, "LED_OFF") != NULL)
+		{
+			led1 = 0;
+		}
+		clt_sock.send(HTTP_CTRL_RESPONSE, strlen(HTTP_CTRL_RESPONSE));
+		clt_sock.close();
 	}
-	free(test_str);
 }
 
 void task4()
@@ -173,6 +193,7 @@ void task5()
 int main()
 {
 	printf("start program\n");
+	buff = (char*)malloc(256);
 	SystemReport sys_state( SLEEP_TIME * PRINT_AFTER_N_LOOPS /* Loop delay time in ms */);
 
 	/* set up ethernet interface */
@@ -198,6 +219,10 @@ int main()
 	svr_gyro.open(&eth1);
 	svr_gyro.bind(eth1.get_ip_address(), PORT_Gyro);
 	svr_gyro.listen(2);
+
+	svr_recv.open(&eth1);
+	svr_recv.bind(eth1.get_ip_address(), PORT_Recv);
+	svr_recv.listen(2);
 	/* set up I2C */
 	i2c.frequency(100);
 
@@ -211,13 +236,13 @@ int main()
 //	I2CwriteByte(0x0A,0x16);								// Request continuous magnetometer measurements in 16 bits
 
 	Thread th1(osPriorityNormal, 1000, NULL);
-	Thread th2(osPriorityNormal1, 1000, NULL);
-//	Thread th3(osPriorityNormal2, 1000, NULL);
+	Thread th2(osPriorityNormal, 1000, NULL);
+	Thread th3(osPriorityNormal, 1000, NULL);
 //	Thread th4(osPriorityNormal3, 1000, NULL);
 //	Thread th5(osPriorityNormal4, 1000, NULL);
 	th1.start(task1);
 	th2.start(task2);
-//	th3.start(task3);
+	th3.start(task3);
 //	th4.start(task4);
 //	th5.start(task5);
 
